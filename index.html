@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Happy birthday</title>
+		<style>
+			html,
+			body {
+				margin: 0;
+				background: black;
+				overflow: hidden;
+				font-family: cursive, 'Trebuchet MS', sans-serif;
+			}
+			canvas {
+				display: block;
+				width: 100vw;
+			}
+			#home {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+			}
+			.hidden {
+				display: none !important;
+			}
+			.birthday-title {
+				position: fixed;
+				bottom: 20vh;
+				left: 50%;
+				transform: translateX(-50%);
+				color: white;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				text-align: center;
+				gap: 8px;
+				font-size: 5vw;
+				white-space: nowrap;
+			}
+			#lottie-1 {
+				width: 30vw;
+				min-width: 300px;
+				max-width: 400px;
+			}
+			#lottie-2 {
+				width: 30vw;
+				min-width: 200px;
+				max-width: 400px;
+			}
+
+			@media (min-width: 1024px) {
+				.birthday-title {
+					font-size: 3vw;
+				}
+				#lottie-2 {
+					width: 15vw;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- <canvas id="canvas"></canvas> -->
+
+		<audio src="./song.mp3" type="audio/mpeg" loop></audio>
+
+		<div id="home" class="page">
+			<div id="lottie-1" onclick="showPage('birthday')"></div>
+		</div>
+
+		<div id="birthday" class="page hidden">
+			<div class="birthday-title">
+				<div id="lottie-2"></div>
+				<div>🎉 Chúc mừng sinh nhật!</div>
+			</div>
+		</div>
+
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"
+			integrity="sha512-jEnuDt6jfecCjthQAJ+ed0MTVA++5ZKmlUcmDGBv2vUI/REn6FuIdixLNnQT+vKusE2hhTk2is3cFvv5wA+Sgg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		></script>
+		<script src="main.js"></script>
+		<script>
+			lottie.loadAnimation({
+				container: document.getElementById('lottie-1'),
+				renderer: 'svg',
+				loop: true,
+				autoplay: true,
+				path: './animation-gift.json'
+			});
+
+			lottie.loadAnimation({
+				container: document.getElementById('lottie-2'),
+				renderer: 'svg',
+				loop: true,
+				autoplay: true,
+				path: './animation-cake.json'
+			});
+		</script>
+	</body>
+</html>
