@@ -5,6 +5,9 @@
 
 let ctx;
 let fireworkCount = 0;
+let fireworks = [];
+let lastFireworkTime = 0;
+const fireworkInterval = window.innerWidth > 1280 ? 400 : 500;
 
 const beautifulColors = [
 	'#FF6B6B', // Red Coral
@@ -18,6 +21,16 @@ const beautifulColors = [
 	'#FFC75F', // Mustard
 	'#9D4EDD' // Deep Violet
 ];
+
+const floatingImages = [];
+const countToShowImage = 12;
+const specialImages = ['image.jpg'];
+const loadedImages = [];
+specialImages.forEach(src => {
+	const img = new Image();
+	img.src = './images/' + src;
+	loadedImages.push(img);
+});
 
 const random = (min, max) => Math.random() * (max - min) + min;
 
@@ -78,6 +91,26 @@ function updateFirework(fw) {
 	if (!fw.exploded) {
 		const newY = fw.y + fw.velocityY;
 		if (newY <= fw.targetY) {
+			fireworkCount++;
+			if (fireworkCount % countToShowImage === 0) {
+				const imageIndex =
+					(fireworkCount / countToShowImage - 1) %
+					loadedImages.length;
+				const selectedImage = loadedImages[imageIndex];
+
+				floatingImages.push({
+					x: fw.x,
+					y: fw.targetY,
+					startTime: performance.now(),
+					duration: 3000, //3s
+					width:
+						window.innerWidth < 1280 ? window.innerWidth / 3 : 300,
+					height:
+						window.innerWidth < 1280 ? window.innerWidth / 3 : 300,
+					image: selectedImage
+				});
+			}
+
 			return {
 				...fw,
 				y: fw.targetY,
@@ -108,52 +141,6 @@ function drawFirework(fw) {
 	}
 }
 
-// const specialImage = new Image();
-// specialImage.src = './image.jpg';
-// const floatingImages = [];
-
-// function drawFirework(fw, timestamp) {
-// 	if (!fw.exploded) {
-// 		ctx.beginPath();
-// 		ctx.arc(fw.x, fw.y, 3, 0, Math.PI * 2);
-// 		ctx.fillStyle = fw.color;
-// 		ctx.fill();
-// 	} else {
-// 		fw.particles.forEach(drawParticle);
-//
-// 		if (fw.isSpecial) {
-// 			if (!fw.imageStartTime) {
-// 				fw.imageStartTime = timestamp;
-// 			}
-//
-// 			const elapsed = timestamp - fw.imageStartTime;
-// 			const fadeDuration = 5000; //5s
-//
-// 			if (elapsed < fadeDuration) {
-// 				const alpha = 1 - elapsed / fadeDuration;
-//
-// 				const imageWidth = 200;
-// 				const imageHeight = 200;
-//
-// 				ctx.save();
-// 				ctx.globalAlpha = alpha;
-// 				ctx.drawImage(
-// 					specialImage,
-// 					fw.x - imageWidth / 2,
-// 					fw.y - imageHeight / 2,
-// 					imageWidth,
-// 					imageHeight
-// 				);
-// 				ctx.restore();
-// 			}
-// 		}
-// 	}
-// }
-
-let fireworks = [];
-let lastFireworkTime = 0;
-const fireworkInterval = window.innerWidth > 1280 ? 400 : 500;
-
 function animate(timestamp) {
 	requestAnimationFrame(animate);
 
@@ -167,15 +154,7 @@ function animate(timestamp) {
 		const color =
 			beautifulColors[Math.floor(Math.random() * beautifulColors.length)];
 
-		fireworkCount++;
-		const isSpecial = fireworkCount === 10;
-
-		fireworks.push({
-			...createFirework(x, targetY, color),
-			isSpecial,
-			imageStartTime: null,
-			imageShown: false
-		});
+		fireworks.push(createFirework(x, targetY, color));
 		lastFireworkTime = timestamp;
 	}
 
@@ -184,13 +163,46 @@ function animate(timestamp) {
 		.filter(fw => !(fw.exploded && fw.particles.length === 0));
 
 	fireworks.forEach(drawFirework);
-	// fireworks.forEach(fw => drawFirework(fw, timestamp));
+
+	floatingImages.forEach((img, index) => {
+		const elapsed = timestamp - img.startTime;
+		if (elapsed > img.duration) {
+			floatingImages.splice(index, 1); // xóa nếu quá thời gian
+			return;
+		}
+
+		const alpha = 1 - elapsed / img.duration;
+
+		// Tính tỷ lệ gốc của ảnh
+		const originalWidth = img.image.width;
+		const originalHeight = img.image.height;
+		const aspectRatio = originalWidth / originalHeight;
+
+		let drawWidth = img.width;
+		let drawHeight = img.height;
+
+		// Giữ đúng tỷ lệ gốc của ảnh
+		if (originalWidth > originalHeight) {
+			drawHeight = drawWidth / aspectRatio;
+		} else {
+			drawWidth = drawHeight * aspectRatio;
+		}
+
+		ctx.save();
+		ctx.globalAlpha = alpha;
+		ctx.drawImage(
+			img.image,
+			img.x - drawWidth / 2,
+			img.y - drawHeight / 2,
+			drawWidth,
+			drawHeight
+		);
+		ctx.restore();
+	});
 }
 
 function showPage(pageId) {
-	// Ẩn tất cả các phần
 	document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-	// Hiện phần được chọn
 	document.getElementById(pageId).classList.remove('hidden');
 
 	if (pageId === 'birthday') {
