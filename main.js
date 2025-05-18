@@ -101,7 +101,6 @@ function updateFirework(fw) {
 	if (!fw.exploded) {
 		const newY = fw.y + fw.velocityY;
 		if (newY <= fw.targetY) {
-			console.log(fireworkCount);
 			if (isShowIamge) {
 				fireworkCount++;
 				if (fireworkCount % countToShowImage === 0) {
