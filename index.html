@@ -4,6 +4,9 @@
 		<meta charset="UTF-8" />
 		<title>Happy birthday</title>
 		<style>
+			* {
+				box-sizing: border-box;
+			}
 			html,
 			body {
 				margin: 0;
@@ -48,6 +51,24 @@
 				min-width: 200px;
 				max-width: 400px;
 			}
+			.image-btn {
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				position: fixed;
+				top: 36px;
+				left: 36px;
+				background: #ca59f7;
+				width: 34px;
+				height: 34px;
+				padding: 4px;
+			}
+			img {
+				max-width: 100%;
+				max-height: 100%;
+				object-fit: cover;
+			}
 
 			@media (min-width: 1024px) {
 				.birthday-title {
@@ -69,6 +90,7 @@
 		</div>
 
 		<div id="birthday" class="page hidden">
+			<div class="image-btn" onclick="handleShowIamge()"><img src="./images/image_icon.svg" /></div>
 			<div class="birthday-title">
 				<div id="lottie-2"></div>
 				<div>🎉 Chúc mừng sinh nhật!</div>

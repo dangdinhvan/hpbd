@@ -24,13 +24,23 @@ const beautifulColors = [
 
 const floatingImages = [];
 const countToShowImage = 12;
-const specialImages = ['image.jpg'];
+const specialImages = [
+	'image-1.jpg',
+	'image-2.jpg',
+	'image-3.jpg',
+	'image-4.jpg',
+	'image-5.jpg',
+	'image-6.jpg',
+	'image-7.jpg',
+	'image-8.jpg'
+];
 const loadedImages = [];
 specialImages.forEach(src => {
 	const img = new Image();
 	img.src = './images/' + src;
 	loadedImages.push(img);
 });
+let isShowIamge = true;
 
 const random = (min, max) => Math.random() * (max - min) + min;
 
@@ -91,24 +101,31 @@ function updateFirework(fw) {
 	if (!fw.exploded) {
 		const newY = fw.y + fw.velocityY;
 		if (newY <= fw.targetY) {
-			fireworkCount++;
-			if (fireworkCount % countToShowImage === 0) {
-				const imageIndex =
-					(fireworkCount / countToShowImage - 1) %
-					loadedImages.length;
-				const selectedImage = loadedImages[imageIndex];
+			console.log(fireworkCount);
+			if (isShowIamge) {
+				fireworkCount++;
+				if (fireworkCount % countToShowImage === 0) {
+					const imageIndex =
+						(fireworkCount / countToShowImage - 1) %
+						loadedImages.length;
+					const selectedImage = loadedImages[imageIndex];
 
-				floatingImages.push({
-					x: fw.x,
-					y: fw.targetY,
-					startTime: performance.now(),
-					duration: 3000, //3s
-					width:
-						window.innerWidth < 1280 ? window.innerWidth / 3 : 300,
-					height:
-						window.innerWidth < 1280 ? window.innerWidth / 3 : 300,
-					image: selectedImage
-				});
+					floatingImages.push({
+						x: fw.x,
+						y: fw.targetY,
+						startTime: performance.now(),
+						duration: 3000, //3s
+						width:
+							window.innerWidth < 1280
+								? window.innerWidth / 3
+								: 300,
+						height:
+							window.innerWidth < 1280
+								? window.innerWidth / 3
+								: 300,
+						image: selectedImage
+					});
+				}
 			}
 
 			return {
@@ -219,3 +236,14 @@ function showPage(pageId) {
 		animate();
 	}
 }
+
+const handleShowIamge = () => {
+	isShowIamge = !isShowIamge;
+
+	const img = document.querySelector('.image-btn img');
+	if (isShowIamge) {
+		img.src = './images/image_icon.svg';
+	} else {
+		img.src = './images/image_icon_crossed.svg';
+	}
+};
